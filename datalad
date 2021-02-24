@@ -1,0 +1,60 @@
+#!/bin/bash
+
+real_path=$(realpath $0)
+
+if test $# -eq 1 -a "X$1" = "X-h" ; then
+  cat <<USAGE
+You are running the bash script:
+
+   $real_path
+
+This is a wrapper script to invoke datalad from a singularity container.
+
+The script will work with any program in the configured container.
+For this script to work, the container must be called 'datalad.sif'
+and be installed in the same directory as the script, or the container's
+full path can be specified by the environment variable DATALAD_SIF.
+
+The program invoked by the script is determined by the basename of the
+script. To make it invoke 'git-annex', for instance, a symbolic link or
+a hard link can be made to the script using the new name 'git-annex'.
+
+Once properly configured, this makes the invoked command completely
+transparent, except in the case where no argumetns are provided, and
+then you read this text right here.
+
+100% by pierre.rioux@mcgill.ca
+USAGE
+  exit 1
+fi
+
+this_loc=$(dirname $real_path)
+this_exec=$(basename $0)
+datalad_image=${DATALAD_SIF:-$this_loc/datalad.sif}
+
+if ! test -f "$datalad_image" ; then
+  cat <<ERROR
+Error: cannot find singularity image file 'datalad.sif'.
+Install it alongside this wrapper script as
+
+  $this_loc/datalad.sif
+ 
+or specify it with a full path in the environment variable 'DATALAD_SIF'
+ERROR
+  exit 2
+fi
+
+if test -z "$(type -p singularity)" ; then
+  echo "Error: singularity is not installed."
+  exit 2
+fi
+
+git_root=$(singularity exec $datalad_image git rev-parse --show-toplevel 2>/dev/null)
+if test -z "$git_root" ; then
+  git_root=$(pwd -P)
+fi
+bind_root=$(dirname "$git_root")
+
+# Execute datalad or git-annex or any other exec inside the container
+# while providing all the other arguments
+exec env SINGULARITY_BINDPATH="$bind_root" singularity exec "$datalad_image" "$this_exec" "$@"
