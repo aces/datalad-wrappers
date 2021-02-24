@@ -20,7 +20,7 @@ script. To make it invoke 'git-annex', for instance, a symbolic link or
 a hard link can be made to the script using the new name 'git-annex'.
 
 Once properly configured, this makes the invoked command completely
-transparent, except in the case where no argumetns are provided, and
+transparent, except in the case where a single '-h' is provided, and
 then you read this text right here.
 
 100% by pierre.rioux@mcgill.ca
