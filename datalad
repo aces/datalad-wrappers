@@ -49,12 +49,16 @@ if test -z "$(type -p singularity)" ; then
   exit 2
 fi
 
-git_root=$(singularity exec $datalad_image git rev-parse --show-toplevel 2>/dev/null)
+git_root=$(git rev-parse --show-toplevel 2>/dev/null)
 if test -z "$git_root" ; then
   git_root=$(pwd -P)
 fi
 bind_root=$(dirname "$git_root")
 
+# Append new bindpath
+test -n "$SINGULARITY_BINDPATH" && SINGULARITY_BINDPATH="$SINGULARITY_BINDPATH,"
+export SINGULARITY_BINDPATH="$SINGULARITY_BINDPATH$bind_root"
+
 # Execute datalad or git-annex or any other exec inside the container
 # while providing all the other arguments
-exec env SINGULARITY_BINDPATH="$bind_root" singularity exec "$datalad_image" "$this_exec" "$@"
+exec singularity exec "$datalad_image" "$this_exec" "$@"
