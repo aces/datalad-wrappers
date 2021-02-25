@@ -31,8 +31,8 @@ singularity build datalad.sif ubuntu.def
 
 ## Building the singularity image from the Docker image
 
-An alternative path to creating the singularity image directly is
-it build it from the local docker image created above.
+An alternative way to create the singularity image directly is
+to build it from the local docker image created above.
 
 ```shell
 singularity build datalad.sif docker-daemon:/name_given/with_dockertag:something
