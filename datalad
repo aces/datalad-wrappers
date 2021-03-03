@@ -61,4 +61,4 @@ export SINGULARITY_BINDPATH="$SINGULARITY_BINDPATH$bind_root"
 
 # Execute datalad or git-annex or any other exec inside the container
 # while providing all the other arguments
-exec singularity exec "$datalad_image" "$this_exec" "$@"
+exec singularity -s exec --cleanenv "$datalad_image" "$this_exec" "$@"
