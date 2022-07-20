@@ -10,8 +10,8 @@ From: ubuntu:20.04
 %post
     # Configure package repo for neurodebian
     apt-get update -y -qq
-    apt-get install -y gnupg wget
-    apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9
+    apt-get install -y gnupg wget curl ca-certificates
+    apt-key adv --recv-keys --keyserver hkps://keys.openpgp.org:443 0xA5D32F012649A5A9
     wget -O/etc/apt/sources.list.d/neurodebian.sources.list http://neuro.debian.net/lists/focal.de-fzj.libre
     apt-get update -y -qq
 

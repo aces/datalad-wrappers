@@ -1,0 +1,28 @@
+
+#
+# Singularity definition file for DataLad
+# Pierre Rioux, pierre.rioux@mcgill.ca, February 2021
+#
+
+Bootstrap: library
+From: centos:8
+
+%post
+    # Configure package repo 
+    yum upgrade -y
+    curl https://downloads.kitenet.net/git-annex/linux/current/rpms/git-annex.repo > /etc/yum.repos.d/git-annex.repo
+    yum install -y git-annex-standalone python3-pip rust-toolset
+    pip3 install setuptools-rust
+    pip3 install datalad
+
+%runscript
+    datalad "$@"
+
+%labels
+    Author          pierre.rioux@mcgill.ca
+    Version         v1.0.0
+    DataladVersion  0.12.4
+    GitAnnexVersion 8.20200226
+
+%help
+    This container provides the Datalad tool along with other utilites (git, git-annex)

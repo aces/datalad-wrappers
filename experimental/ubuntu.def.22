@@ -1,23 +1,26 @@
 
 #
 # Singularity definition file for DataLad
-# Pierre Rioux, pierre.rioux@mcgill.ca, February 2021
+# Pierre Rioux, pierre.rioux@mcgill.ca, February 2021, August 2022
 #
 
 Bootstrap: library
-From: debian:10
+From: ubuntu:22
 
 %post
     # Configure package repo for neurodebian
     apt-get update -y -qq
-    apt-get install -y gnupg wget
-    apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9
-    wget -O/etc/apt/sources.list.d/neurodebian.sources.list http://neuro.debian.net/lists/focal.de-fzj.libre
+    apt-get install -y gnupg wget curl ca-certificates
+    apt-key adv --recv-keys --keyserver hkps://keys.openpgp.org:443 0xA5D32F012649A5A9
+    wget -O/etc/apt/sources.list.d/neurodebian.sources.list http://neuro.debian.net/lists/jammy.us-ca.libre
+    apt-get update -y -qq
 
     # Upgrade all packages
     apt-get upgrade -y
 
     # Install DataLad
+    echo yes | DEBIAN_FRONTEND=noninteractive apt-get install -f -y neurodebian
+    apt-get update -y -qq
     DEBIAN_FRONTEND=noninteractive apt-get install -f -y datalad
     apt-get upgrade -y
     apt-get upgrade -y datalad
@@ -33,8 +36,8 @@ From: debian:10
 %labels
     Author          pierre.rioux@mcgill.ca
     Version         v1.0.0
-    DataladVersion  0.12.4
-    GitAnnexVersion 8.20200226
+    DataladVersion  0.15.5
+    GitAnnexVersion 8.20210223
 
 %help
     This container provides the Datalad tool along with other utilites (git, git-annex)

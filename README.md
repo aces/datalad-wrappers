@@ -17,6 +17,7 @@ Suggestions welcome.
 ```shell
 cd this_repo
 docker build .
+docker tag dalatad:ubuntu22  # or whatever tag you prefer
 ```
 
 The docker image will need to be given a name, which you can do
@@ -35,7 +36,8 @@ An alternative way to create the singularity image directly is
 to build it from the local docker image created above.
 
 ```shell
-singularity build datalad.sif docker-daemon:/name_given/with_dockertag:something
+# Given you tagged the Docker build as 'datalad:ubuntu22' as show above...
+singularity build datalad.sif docker-daemon://datalad:ubuntu22
 ```
 
 ## How to use the wrappers
