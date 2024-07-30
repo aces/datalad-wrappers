@@ -1,0 +1,33 @@
+#
+# Docker file for a DataLad installation with EBRAINS support
+# Pierre Rioux, pierre.rioux@mcgill.ca, August 2024
+#
+
+FROM almalinux:latest
+
+# Update the system
+RUN [ "dnf", "update", "-y" ]
+
+# Add EPEL
+RUN [ "dnf", "install", "-y", "epel-release" ]
+
+# Add utilities
+RUN [ "dnf", "install", "-y", "git" ]
+RUN [ "dnf", "install", "-y", "curl", "--allowerasing" ]
+RUN [ "dnf", "install", "-y", "pip" ]
+RUN [ "dnf", "clean", "all" ]
+
+# Add datalad and git-annex
+RUN [ "pip", "install", "datalad" ]
+RUN [ "pip", "install", "datalad-installer" ]
+RUN datalad-installer git-annex -m datalad/git-annex:release --install-dir / && rm -rf /tmp/dl*
+
+# Stupid git-annex crash if there is no git user name and email
+RUN git config --global user.email "you@example.com" && git config --global user.name "Your Name"
+
+# Add EBRAINS-specific modules for datalad
+RUN pip install git+https://github.com/datalad/datalad-ebrains.git && rm -rf /tmp/[a-zA-Z]*
+
+# By default, the container acts as datalad
+ENTRYPOINT [ "/usr/local/bin/datalad" ]
+

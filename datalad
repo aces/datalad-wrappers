@@ -8,7 +8,7 @@ You are running the bash script:
 
    $real_path
 
-This is a wrapper script to invoke datalad from a singularity container.
+This is a wrapper script to invoke datalad from an apptainer container.
 
 The script will work with any program in the configured container.
 For this script to work, the container must be called 'datalad.sif'
@@ -34,7 +34,7 @@ datalad_image=${DATALAD_SIF:-$this_loc/datalad.sif}
 
 if ! test -f "$datalad_image" ; then
   cat <<ERROR
-Error: cannot find singularity image file 'datalad.sif'.
+Error: cannot find apptainer image file 'datalad.sif'.
 Install it alongside this wrapper script as
 
   $this_loc/datalad.sif
@@ -44,8 +44,8 @@ ERROR
   exit 2
 fi
 
-if test -z "$(type -p singularity)" ; then
-  echo "Error: singularity is not installed."
+if test -z "$(type -p apptainer)" ; then
+  echo "Error: apptainer is not installed."
   exit 2
 fi
 
@@ -56,9 +56,9 @@ fi
 bind_root=$(dirname "$git_root")
 
 # Append new bindpath
-test -n "$SINGULARITY_BINDPATH" && SINGULARITY_BINDPATH="$SINGULARITY_BINDPATH,"
-export SINGULARITY_BINDPATH="$SINGULARITY_BINDPATH$bind_root"
+test -n "$APPTAINER_BINDPATH" && APPTAINER_BINDPATH="$APPTAINER_BINDPATH,"
+export APPTAINER_BINDPATH="$APPTAINER_BINDPATH$bind_root"
 
 # Execute datalad or git-annex or any other exec inside the container
 # while providing all the other arguments
-exec singularity -s exec --cleanenv "$datalad_image" "$this_exec" "$@"
+exec apptainer -s exec --cleanenv "$datalad_image" "$this_exec" "$@"
