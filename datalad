@@ -59,6 +59,10 @@ bind_root=$(dirname "$git_root")
 test -n "$APPTAINER_BINDPATH" && APPTAINER_BINDPATH="$APPTAINER_BINDPATH,"
 export APPTAINER_BINDPATH="$APPTAINER_BINDPATH$bind_root"
 
+# This env variable is only needed for the datalad container
+# that includes the ebrains module. Otherwise it will be ignored.
+export APPTAINERENV_KG_AUTH_TOKEN="$KG_AUTH_TOKEN"
+
 # Execute datalad or git-annex or any other exec inside the container
 # while providing all the other arguments
 exec apptainer -s exec --cleanenv "$datalad_image" "$this_exec" "$@"
